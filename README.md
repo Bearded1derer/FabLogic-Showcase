@@ -93,7 +93,6 @@ To request a demo or discuss integration with your existing ERP workflow, please
 
 📬 Contact
 
-Aaron
-Operations Manager turned Python Developer
+Aaron - Operations Manager turned Python Developer
 
 View Portfolio Website | Connect on LinkedIn
