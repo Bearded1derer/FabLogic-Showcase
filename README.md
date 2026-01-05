@@ -1,39 +1,62 @@
-# FabLogic
+# FabLogic HG
+[![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
+[![Framework](https://img.shields.io/badge/GUI-PySide6%20(Qt)-41cd52?style=flat&logo=qt&logoColor=white)](https://doc.qt.io/qtforpython/)
+[![Industry](https://img.shields.io/badge/Industry-Hose%20%26%20Gasket-orange?style=flat)](https://github.com/Bearded1derer/FabLogic-Showcase)
 
-![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=flat&logo=python&logoColor=white)
-![Framework](https://img.shields.io/badge/Framework-PySide6-41CD52?style=flat&logo=qt&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Commercial_Product-blue)
-
-> **A Dual-Backend ERP & Quoting Engine for Custom Fabrication.**
-
----
-
-## 📸 Demo
-
-![Application Demo](assets/demo.gif)
+**Specialized Manufacturing Intelligence for the Hose & Gasket Industry.**
 
 ---
 
-## 💼 The Challenge
+## 🏭 The Problem: Generic ERPs Don't Cut It
+In the custom hose and gasket industry, "off-the-shelf" software fails.
+* **Inventory Mismatch:** You buy sheet rubber in **pounds** or **rolls** but sell it in **square inches** or **custom shapes**.
+* **The "Scrap" Trap:** Standard software cannot account for the waste material left over after cutting circular gaskets from a rectangular sheet.
+* **Complex Assemblies:** Quoting a hose assembly requires tracking the hose, the fittings, the labor, and the crimp specs simultaneously.
 
-In the custom hose and gasket industry, "off-the-shelf" software fails. Inventory is complex (inches vs. feet), and pricing requires intricate calculations (nesting circular gaskets on rectangular sheets to minimize waste). My client needed a system that could handle these complex manufacturing variables while syncing financial data with both **QuickBooks Online** and **QuickBooks Desktop**.
+**FabLogic HG** bridges the gap. It is a proprietary "sidecar" application that adds specialized manufacturing logic to your existing QuickBooks environment.
 
-## 🛠️ The Solution
+## ⚡ Key Capabilities
 
-I engineered a standalone Python desktop application (PySide6) that serves as a "sidecar" to QuickBooks. It bridges the gap between raw inventory data and manufacturing logic.
+### 1. Smart Gasket Nesting (Yield Optimization)
+Stop guessing your material costs. FabLogic HG uses a custom **Greedy Best-Fit algorithm** to virtually "nest" circular gaskets onto your specific sheet sizes before you quote.
+* **Optimized Yield:** Calculates the exact number of gaskets per sheet.
+* **Slug Management:** Accounts for usable "slugs" (waste material from inner cutouts) to maximize future profit.
+* **Accurate Costing:** Automatically distributes the cost of waste material into the unit price.
 
-* **Dual-Backend Strategy:** Implemented an Abstract Base Class architecture to allow the app to seamlessly switch between QuickBooks Online (REST API) and Desktop (COM/XML) without changing the core business logic.
-* **Algorithmic Optimization:** Developed a custom "Greedy Best-Fit" nesting algorithm. It calculates how many gaskets fit on a sheet, accounting for "slugs" (waste material from inner cutouts) to maximize yield and accurately price scrap.
-* **Dynamic Assembly Builder:** Created a "Hose Builder" module that automatically calculates labor, fitting costs, and crimp specs based on hose length and pressure ratings.
+### 2. The Hose Assembly Builder
+A dedicated module for building complex hose assemblies in seconds.
+* **Auto-Calculations:** Input the ID, pressure rating, and length; the system automatically selects the correct fittings and crimp specs.
+* **Labor Tracking:** Applies standard labor times based on the assembly complexity (crimping vs. welding).
+
+### 3. Dual-Backend QuickBooks Bridge
+FabLogic HG is built on a "Dual-Backend" architecture, meaning it works seamlessly with both:
+* **QuickBooks Desktop (Enterprise):** Direct COM/XML integration for legacy stability.
+* **QuickBooks Online:** Modern OAuth2 REST API integration for cloud flexibility.
+
+*Your business logic stays the same, even if you migrate your accounting software.*
 
 ---
 
-## 🚀 Technical Highlights (The "Secret Sauce")
+## 📸 System Demo
+> *[Insert your demo GIF here]*
 
-**Abstracting Legacy Integrations**
-One of the biggest hurdles was supporting both modern web APIs and legacy desktop COM interfaces simultaneously. I used the Strategy Pattern to create a unified `BackendInterface`. This allows the UI to call standard methods like `push_invoice()`, while the underlying adapter handles the specific complexities of XML parsing (for Desktop) or JSON payloads (for Online).
+---
 
-### Key Code Snippet
+## 🛠️ Technical Architecture
+Built for reliability on the shop floor and flexibility in the back office.
+
+| Layer | Technology Stack |
+| :--- | :--- |
+| **Core Application** | Python 3.11, PySide6 (Qt) |
+| **Data & Caching** | SQLite (Local speed), Pandas (Data manipulation) |
+| **Legacy Bridge** | `pywin32` (COM Interface for QB Desktop) |
+| **Cloud Bridge** | Intuit OAuth2 (REST API for QB Online) |
+| **Algorithms** | Custom 2D Bin Packing (Nesting) |
+
+### The "Secret Sauce": Abstract Strategy Pattern
+One of the biggest technical challenges was supporting both modern web APIs and legacy desktop COM interfaces simultaneously.
+
+I used the **Strategy Pattern** to create a unified `BackendInterface`. This allows the UI to call standard methods like `push_invoice()`, while the underlying adapter handles the specific complexities of XML parsing (for Desktop) or JSON payloads (for Online).
 
 ```python
 # The Greedy Best-Fit Nesting Strategy
@@ -44,53 +67,9 @@ def calculate_layout(sheet_width, sheet_height, items, spacing):
     placed_items = []
     
     for item in sorted_items:
-        # Check if item fits in an existing "Slug" (waste material) before using fresh sheet
+        # Check if item fits in an existing "Slug" (waste material) 
+        # before using a fresh sheet to maximize yield.
         best_slug_idx = -1
         for i, slug in enumerate(slugs):
-            if slug['size'] >= od + spacing:
-                 # ... Match logic ...
-```
-
----
-
-## 🏗️ Architecture & Tech Stack
-
-This application was built to be scalable and maintainable using the following technologies:
-
-| Category | Technologies |
-|----------|-------------|
-| **Core** | Python 3.11, PySide6 (Qt) |
-| **Data** | SQLite (Local Caching), Pandas (Data Manipulation) |
-| **Integrations** | Intuit OAuth (QBO), pywin32 (QBD COM Interface) |
-| **Key Logic** | Custom 2D Bin Packing Algorithm (Nesting) |
-
-### System Data Flow
-```mermaid
-graph TD;
-    UI[PySide6 Frontend] --> Controller;
-    Controller --> BackendInterface{Backend Interface};
-    BackendInterface -->|REST API| QBO[QuickBooks Online];
-    BackendInterface -->|COM/XML| QBD[QuickBooks Desktop];
-    Controller --> Algo[Nesting Algorithm];
-    Algo --> DB[(SQLite Cache)];
-```
-
----
-
-## 🔐 Licensing & Access
-
-This software is a proprietary commercial product. 
-
-**Availability:**
-* **Source Code:** Closed Source (Available via licensing agreement)
-* **Binaries:** Windows 10/11 Executable (`.exe`)
-* **Customization:** Available for white-labeling or feature additions.
-
-To request a demo or discuss integration with your existing ERP workflow, please contact me directly.
-
----
-
-## 📬 Contact
-
-**Aaron** *Operations Manager turned Python Developer* Looking to automate your business operations?  
-[View Portfolio Website](https://bearded1derer.github.io/) | [Connect on LinkedIn](https://www.linkedin.com/in/aaron-arpin-979a1354/)
+            if slug['size'] >= item['od'] + spacing:
+                # ... Match logic ...
