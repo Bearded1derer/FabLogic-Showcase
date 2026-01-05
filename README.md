@@ -38,7 +38,7 @@ FabLogic HG is built on a "Dual-Backend" architecture, meaning it works seamless
 ---
 
 ## 📸 System Demo
-> *[Insert your demo GIF here]*
+[assets/Demo.gif](https://github.com/Bearded1derer/FabLogic-Showcase/blob/079a9d75e54ac03dbaa2593073b8ac3b998594ae/assets/Demo.gif)
 
 ---
 
@@ -73,3 +73,13 @@ def calculate_layout(sheet_width, sheet_height, items, spacing):
         for i, slug in enumerate(slugs):
             if slug['size'] >= item['od'] + spacing:
                 # ... Match logic ...
+🔐 Licensing & Access
+FabLogic HG is a proprietary commercial product developed by FabLogic Systems.
+
+Source Code: Closed Source (Available via enterprise licensing agreement)
+
+Deployment: Windows 10/11 Executable (.exe)
+
+Customization: Available for white-labeling or feature additions specific to your shop.
+
+To request a demo or discuss integration with your existing Hose & Gasket workflow, please contact me directly.
